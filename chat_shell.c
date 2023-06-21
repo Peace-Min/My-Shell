@@ -112,6 +112,19 @@ void parse_cmd(char* cmd, char* cmd_args[MAX_ARGS]) {
 	}
 	if(!strcmp(cmd_args[0],"exit"))	exit(0);
 }
+void pipe_exec(char *path[],char *opt[][MAX_PATH_LEN],int pipefd[2],int flag,int *cnt){
+	pid_t pid=fork();
+
+	if(flag==0)
+		dup2(pipefd[0],0);
+	if(flag==1)
+		dup2(pipefd[1],1);
+
+	close(pipefd[0]);
+	close(pipefd[1]);
+
+	execv(path[*cnt],opt[*cnt]);
+}
 void pipe_hand(char *cmd){
     char *path[MAX_PATH_LEN];
 	char *exe[MAX_PATH_LEN];
@@ -131,26 +144,39 @@ void pipe_hand(char *cmd){
 	int fd[2],fp[2],cnt=0,st;
 	pipe(fd);
 	pipe(fp);
-
-	pipe_exe(path,opt,&i,fd,&cnt);
-	while( wait(&st)>0);
+	pipe_exec(path,opt,fd,1,&cnt);
+	close(fd[1]);
+	cnt++;
+	pipe_exec(path,opt,fp,0,&cnt);
+	close(fp[0]);
+	//printf("%i:d\tcnt:%d\n",i,cnt);
+	//pipe_exe(path,opt,&i,fd,&cnt);
+	//printf("%i:d\tcnt:%d\n",i,cnt);
+	//while( wait(&st)!=-1)	;
 	exit(0);
 }
 void pipe_exe(char *path[],char *opt[][MAX_PATH_LEN],int *i,int fd[2],int *cnt){
 	int st;
-	if(fork()==0){
+	printf("cnt:%d\n",*cnt);
+	/*if(fork()==0){
 		dup2(fd[1],1);
 		close(fd[0]);
 		close(fd[1]);
 		execv(path[*cnt],opt[*cnt]);
 		exit(0);
+	}*/
+	if(fork()==0){
+		dup2(fd[0],0);
+		if(*i != 1)	dup2(fd[1],1);
+		close(fd[0]);
+		close(fd[1]);
+		(*cnt)++;
+		(*i)--;
+		execv(path[*cnt],opt[*cnt]);
 	}
-	dup2(fd[0],0);
-	close(fd[0]);
-	close(fd[1]);
+	while( wait(&st)!=-1)	;
 	(*cnt)++;
 	(*i)--;
-	execv(path[*cnt],opt[*cnt]);
 	return ;
 }
 int pipe_trim(char *cmd,char *cmd_args[MAX_ARGS]){
