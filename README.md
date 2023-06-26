@@ -13,7 +13,7 @@ _____
 * 1. 단일 pipe를 통해 pipe 처리 함수를 재귀적으로 불러봐 처리 
  :    
  함수내에서 pipe 동작 구현이 생각처럼 진행되지않아 다른방법고안
-* 2. pipe 와 임시 tmp역할하는 file open 후 write하고 다음 pipe에서 내용읽어와서 pipe-file 구조로 Multi-pipe 구현:     
+* 2. pipe 와 임시 tmp역할하는 file open 후 write하고 다음 pipe에서 내용읽어와서 pipe-file 구조로 Multi-pipe:     
 I/O 처리 및 비 효율적인 Memory 사용방법
 
 **해결방법**
