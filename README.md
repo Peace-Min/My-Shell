@@ -17,7 +17,7 @@ _____
 I/O 처리 및 비 효율적인 Memory 사용방법
 
 **해결방법**
-* 동적으로 필요한 Pipe를 생성하여 Linked List와 비슷한 방법으로 이전 Pipe 현재 Pipe를 서로 이어서 이전 값을 불러와서 처리함.
+* 동적으로 필요한 Pipe를 생성하여 Linked List와 비슷한 방법으로 이전 Pipe 현재 Pipe를 서로 이어서 이전 값을      불러와서 처리함.
 * **EX**                 
 dup2(pipes[j][0], 0);             
 dup2(pipes[j+1][1], 1);
