@@ -11,7 +11,7 @@
 #include <signal.h>
 #include <wait.h>
 #include <fcntl.h>
-#include <sys/sendfile.h>
+#include <setjmp.h>
 #define MAX_PATHS 5
 #define MAX_PATH_LEN 500
 #define MAX_CMD_LEN 256
@@ -31,10 +31,11 @@ void print_prompt();
 void pipe_hand(char *cmd);
 int pipe_trim(char *cmd,char *cmd_args[MAX_ARGS]);
 void pipe_opt(char *pipe_com[],char *opt[][MAX_PATH_LEN],int i,char *exe[]);
-void pipe_exe(char *path[],char *opt[][MAX_PATH_LEN],int *i,int fd[2],int *cnt);
+void do_pipe(char *path[],char *opt[][MAX_PATH_LEN], int i);
 char* pathname[MAX_PATHS];
 char* username;
 char cwd[PATH_MAX];
+jmp_buf env;
 
 int main() {
     char cmd[MAX_CMD_LEN];
@@ -49,6 +50,7 @@ int main() {
 
 	load_path();
     while (true) {
+		setjmp(env);
 		memset(cmd,0,sizeof(cmd));
 		memset(cmd_args,0,sizeof(cmd_args));
         read_cmd(cmd);
@@ -112,72 +114,21 @@ void parse_cmd(char* cmd, char* cmd_args[MAX_ARGS]) {
 	}
 	if(!strcmp(cmd_args[0],"exit"))	exit(0);
 }
-void pipe_exec(char *path[],char *opt[][MAX_PATH_LEN],int pipefd[2],int flag,int *cnt){
-	pid_t pid=fork();
-
-	if(flag==0)
-		dup2(pipefd[0],0);
-	if(flag==1)
-		dup2(pipefd[1],1);
-
-	close(pipefd[0]);
-	close(pipefd[1]);
-
-	execv(path[*cnt],opt[*cnt]);
-}
 void pipe_hand(char *cmd){
     char *path[MAX_PATH_LEN];
 	char *exe[MAX_PATH_LEN];
 	char *pipe_com[MAX_ARGS];
-	
     char executable[MAX_PATH_LEN];
 	int i=pipe_trim(cmd,pipe_com);
 	char *opt[i][MAX_PATH_LEN];
 	pipe_opt(pipe_com,opt,i,exe);
-
 	for(int j=0;j<i;j++) {
 		path[j]=(char *)malloc(sizeof(char) * 10);
 		if(!find_executable(exe[j],path[j]))
         	printf("Command not found.\n");
     }
-
-	int fd[2],fp[2],cnt=0,st;
-	pipe(fd);
-	pipe(fp);
-	pipe_exec(path,opt,fd,1,&cnt);
-	close(fd[1]);
-	cnt++;
-	pipe_exec(path,opt,fp,0,&cnt);
-	close(fp[0]);
-	//printf("%i:d\tcnt:%d\n",i,cnt);
-	//pipe_exe(path,opt,&i,fd,&cnt);
-	//printf("%i:d\tcnt:%d\n",i,cnt);
-	//while( wait(&st)!=-1)	;
-	exit(0);
-}
-void pipe_exe(char *path[],char *opt[][MAX_PATH_LEN],int *i,int fd[2],int *cnt){
-	int st;
-	printf("cnt:%d\n",*cnt);
-	/*if(fork()==0){
-		dup2(fd[1],1);
-		close(fd[0]);
-		close(fd[1]);
-		execv(path[*cnt],opt[*cnt]);
-		exit(0);
-	}*/
-	if(fork()==0){
-		dup2(fd[0],0);
-		if(*i != 1)	dup2(fd[1],1);
-		close(fd[0]);
-		close(fd[1]);
-		(*cnt)++;
-		(*i)--;
-		execv(path[*cnt],opt[*cnt]);
-	}
-	while( wait(&st)!=-1)	;
-	(*cnt)++;
-	(*i)--;
-	return ;
+	do_pipe(path,opt,i);
+	longjmp(env,1);
 }
 int pipe_trim(char *cmd,char *cmd_args[MAX_ARGS]){
 	int i=0;
@@ -206,6 +157,45 @@ void pipe_opt(char *pipe_com[],char *opt[][MAX_PATH_LEN],int i,char *exe[]){
 			cnt++;
 		}
 	}
+}
+void do_pipe(char *path[],char *opt[][MAX_PATH_LEN], int i){
+	int pipes[i][2],pipe_cnt=i-1,pid,status;
+
+	/*****  1번째 명령어 실행  *****/
+  	pipe(pipes[0]);        
+	if ((pid=fork()) == 0) {
+		dup2(pipes[0][1], 1);  
+    	close(pipes[0][1]);    
+		printf("%s\n %s\n",path[0],*opt[0]);
+    	execvp(path[0],opt[0]);
+    	fprintf(stderr, "execvp() error\n");
+  	}
+    close(pipes[0][1]);   
+	wait(&status);   
+
+	/***`;**  마지막 명령어 제외 모두 실행  *****/
+	for (int j = 0; j < pipe_cnt-1; j++) {
+		pipe(pipes[j+1]);     
+		if ((pid=fork()) == 0) {
+			dup2(pipes[j][0], 0);   
+			dup2(pipes[j+1][1], 1); 
+			close(pipes[j][0]);   
+			close(pipes[j+1][1]); 
+			execv(path[j+1], opt[j+1]);  
+			fprintf(stderr, "execvp() error\n");
+		}
+		close(pipes[j+1][1]); 
+		wait(&status);        
+	}
+		/*****  마지막 명령어 실행  *****/
+	if ( (pid=fork()) == 0) {
+		dup2(pipes[pipe_cnt-1][0], 0); 
+		close(pipes[pipe_cnt-1][0]); 
+		close(pipes[pipe_cnt-1][1]);  
+		execv(path[pipe_cnt], opt[pipe_cnt]);  
+	}
+	wait(&status);
+	return;
 }
 void load_path() {
     FILE* fp;
