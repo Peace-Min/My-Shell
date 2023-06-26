@@ -3,7 +3,7 @@
 
 총 목표
 1. Multi-Pipe(6.26 완료)
-2. redirection션(>) 
+2. redirection(>) 
 _____
 # 1.Multi-Pipe
 > 내가 생각한 파이프의 흐름대로 진행되지않아 많은 수정과정을 거쳤음. 
