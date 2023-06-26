@@ -121,6 +121,7 @@ void pipe_hand(char *cmd){
     char executable[MAX_PATH_LEN];
 	int i=pipe_trim(cmd,pipe_com);
 	char *opt[i][MAX_PATH_LEN];
+	memset(opt,0,sizeof(opt));
 	pipe_opt(pipe_com,opt,i,exe);
 	for(int j=0;j<i;j++) {
 		path[j]=(char *)malloc(sizeof(char) * 10);
