@@ -115,10 +115,10 @@ void parse_cmd(char* cmd, char* cmd_args[MAX_ARGS]) {
 	if(!strcmp(cmd_args[0],"exit"))	exit(0);
 }
 void pipe_hand(char *cmd){
-    char *path[MAX_PATH_LEN];
+	char *path[MAX_PATH_LEN];	
 	char *exe[MAX_PATH_LEN];
 	char *pipe_com[MAX_ARGS];
-    char executable[MAX_PATH_LEN];
+	char executable[MAX_PATH_LEN];
 	int i=pipe_trim(cmd,pipe_com);
 	char *opt[i][MAX_PATH_LEN];
 	memset(opt,0,sizeof(opt));
