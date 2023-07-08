@@ -14,7 +14,7 @@ _____
 * 2. pipe 와 임시 tmp역할하는 file open 후 write하고 다음 pipe에서 내용읽어와서 pipe-file 구조로 실제 구현까지 했습니다. </br>하지만 비 효율적인 Memory 사용방법이라고 판단하여 수정하였습니다.
 
 **해결방법**
-* 동적으로 필요한 Pipe를 생성하여 Linked List와 비슷한 방법으로 previous,next Pipe 서로 연결
+* 동적으로 필요한 Pipe를 생성하여 Linked List와 비슷한 방법으로 previous,next Pipe 서로 연결 
 * **EX**                 
 dup2(pipes[j][0], 0);             
 dup2(pipes[j+1][1], 1);
