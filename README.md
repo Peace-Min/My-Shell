@@ -16,8 +16,8 @@ _____
 **해결방법**
 * 동적으로 필요한 Pipe를 생성하여 Linked List와 비슷한 방법으로 previous,next Pipe 서로 연결 
 * **EX**                 
-** dup2(pipes[j][0], 0);             
-** dup2(pipes[j+1][1], 1);
+dup2(pipes[j][0], 0);             
+dup2(pipes[j+1][1], 1);
 
 ># 결과 사진
 ![Alt text](img/image.png)
