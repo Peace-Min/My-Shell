@@ -34,7 +34,7 @@ for (int j = 0; j < pipe_cnt-1; j++) {
 ![Alt text](img/image-2.png)
 ![Alt text](img/image-3.png)
 </br>
-**후기**
+## **후기**
 * 생각보다 Multi-pipe 구현에 대해 많은 시간이 소요되었습니다.</br> </br>
 * 마음대로 구현이 되지않아 많은 소스코드를 살펴보았고, 이 때 저의 부족함을 많이 느꼈습니다.</br> </br>
 * 앞으로 많은 예제들을 구현해보고 타인의 코드또한 많이 보아야겠다고 느낄 수 있었습니다.
@@ -45,12 +45,10 @@ for (int j = 0; j < pipe_cnt-1; j++) {
 |:---|:---:|
 |**program > file**|프로그램의 출력을 file로 redirect 시킨다.|
 |**program >> file**|프로그램의 출력을 file에 덧붙힌다.|
+<br/>
 
-
-**에러사항**
-<br/>>> , > 각각의 문자열 분리 및 strtok 후 공백 제거 인지<br/>
 # 결과 사진
 ![Alt text](img/image-10.png)
 ![Alt text](img/image-11.png)<br/>
-**후기**
+## **후기**
 * redirection은 실질적인 구현해서 결과를 내는 과정보다는 결과를 도출하기위한 과정이 더 어려웠습니다.
