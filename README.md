@@ -14,8 +14,19 @@ _____
 ## **해결방법**
 * 동적으로 필요한 Pipe를 생성하여 Linked List와 비슷한 방법으로 previous,next Pipe 서로 연결 
 ```C                 
-dup2(pipes[j][0], 0);             
-dup2(pipes[j+1][1], 1);
+for (int j = 0; j < pipe_cnt-1; j++) {
+		pipe(pipes[j+1]);     
+		if ((pid=fork()) == 0) {
+			dup2(pipes[j][0], 0);   
+			dup2(pipes[j+1][1], 1); 
+			close(pipes[j][0]);   
+			close(pipes[j+1][1]); 
+			execv(path[j+1], opt[j+1]);  
+			fprintf(stderr, "execvp() error\n");
+		}
+		close(pipes[j+1][1]); 
+		wait(&status);        
+	}
 ```
 
 ># 결과 사진
