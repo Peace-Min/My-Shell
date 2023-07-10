@@ -166,12 +166,12 @@ void do_pipe(char *path[],char *opt[][MAX_PATH_LEN], int i){
   	pipe(pipes[0]);        
 	if ((pid=fork()) == 0) {
 		dup2(pipes[0][1], 1);  
-    	close(pipes[0][1]);    
+    		close(pipes[0][1]);    
 		printf("%s\n %s\n",path[0],*opt[0]);
-    	execvp(path[0],opt[0]);
-    	fprintf(stderr, "execvp() error\n");
+    		execvp(path[0],opt[0]);
+    		fprintf(stderr, "execvp() error\n");
   	}
-    close(pipes[0][1]);   
+    	close(pipes[0][1]);   
 	wait(&status);   
 
 	/***`;**  마지막 명령어 제외 모두 실행  *****/
