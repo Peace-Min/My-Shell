@@ -6,7 +6,7 @@
 * redirection(>) (6.28 완료)  
 _____
 # 1.Multi-Pipe
-> Pipe에 대해 학습 후, Shell_Pipe 구현 하는 것을 목표로 설정하였습니다. 
+> Pipe 학습 후, Shell_Pipe 구현 하는 것을 목표로 설정하였습니다. 
 
 ## **에러사항**
 * Pipe 와 임시 tmp역할하는 File에 write 후 다음 pipe에서 Read를 하는 pipe-file 구조로 실제 구현까지 했습니다. </br>하지만 비 효율적인 방법이라고 판단하여 수정하였습니다.
