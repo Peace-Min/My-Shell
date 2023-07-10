@@ -16,8 +16,8 @@ _____
 **해결방법**
 * 동적으로 필요한 Pipe를 생성하여 Linked List와 비슷한 방법으로 previous,next Pipe 서로 연결 
 * **EX**                 
-dup2(pipes[j][0], 0);             
-dup2(pipes[j+1][1], 1);
+** dup2(pipes[j][0], 0);             
+** dup2(pipes[j+1][1], 1);
 
 ># 결과 사진
 ![Alt text](img/image.png)
@@ -43,4 +43,4 @@ dup2(pipes[j+1][1], 1);
 ![Alt text](img/image-10.png)
 ![Alt text](img/image-11.png)<br/>
 **후기**
-* redirection은 실질적인 구현해서 결과를 내는 과정보다는<br/>결과를 도출하기위한 과정이 더 어려웠습니다.
+* redirection은 실질적인 구현해서 결과를 내는 과정보다는 결과를 도출하기위한 과정이 더 어려웠습니다.
