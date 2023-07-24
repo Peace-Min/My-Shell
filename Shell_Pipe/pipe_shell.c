@@ -45,15 +45,16 @@ int main() {
     print_welcome();
 
 	//look like real shell signal set
-	signal(SIGINT,sig_hand);
-	signal(SIGQUIT,sig_hand);
+    signal(SIGINT,sig_hand);
+    signal(SIGQUIT,sig_hand);
 
-	load_path();
+    load_path();
+	
     while (true) {
 		setjmp(env);
 		memset(cmd,0,sizeof(cmd));
 		memset(cmd_args,0,sizeof(cmd_args));
-        read_cmd(cmd);
+        	read_cmd(cmd);
 		parse_cmd(cmd, cmd_args);
         
         if (strcmp(cmd_args[0], "setpath") == 0) { 
